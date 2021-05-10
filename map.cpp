@@ -116,7 +116,7 @@ std::vector<int> SimulatedAnnealing(Map map, double initialTemperature, double e
     for (int i = 0; i < n; ++i)
     {
         //map.GetSeq()[i] = (rand() % 100);
-        random_shuffle(map.GetSeq().begin(), map.GetSeq().end());
+        std::random_shuffle(map.GetSeq().begin(), map.GetSeq().end());
     }
     // Функция randperm(n) - генерирует случайныую последовательность из целых чисел от 1 до n
 
