@@ -106,18 +106,20 @@ std::vector<int> SimulatedAnnealing(Map map, double initialTemperature,
         map.GetSeq()[i] = i;
     }
 
+    std::random_device rd;
+    std::mt19937 g(rd());
     for (int i = 0; i < n; ++i) {
         // map.GetSeq()[i] = (rand() % 100);
-        std::random_shuffle(map.GetSeq().begin(), map.GetSeq().end());
+        std::shuffle(map.GetSeq().begin(), map.GetSeq().end(), g);
     }
-    // Функция randperm(n) - генерирует случайныую последовательность из целых
+    // Функция randperm(n) - генерирует случайную последовательность из целых
     // чисел от 1 до n
 
     double currentEnergy = map.CalculateEnergy(
         map.GetSeq());  // вычисляем энергию для первого состояния
     double T = initialTemperature;
 
-    for (int i = 1; i < 1000000; ++i) {
+    for (int i = 1; i < 10000; ++i) {
         map.GenerateStateCandidate(
             map.GetSeq());  // получаем состояние-кандидат
         std::vector<int> stateCandidate = map.GetSeq();

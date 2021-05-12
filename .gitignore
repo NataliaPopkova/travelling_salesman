@@ -1,1 +1,6 @@
 /tmp
+/out
+/CMakeFiles
+/.cmake
+/Testing
+/.vs

@@ -2,7 +2,7 @@
 
 int main(int argc, char** argv) {
     std::srand(std::time(nullptr));
-    Map map(100);
+    Map map(5);
     map.InitializeCities();
 
     std::ofstream file("Cities.txt");
