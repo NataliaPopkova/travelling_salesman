@@ -17,25 +17,6 @@ std::vector<int>& Map::GetSeq() {
     return Seq;
 }
 
-void SwapSubsequence(int i, int j, std::vector<int>& arr) {
-    double a;
-    if ((j - i - 1) % 2 != 0) {  //если нечетное количество эл-тов между ними
-        int z = i + (j - i - 2) / 2 + 1;
-        for (int k = i; k <= j / 2; ++k) {
-            a                    = arr[k];
-            arr[k]               = arr[k + 2 * (z - k)];
-            arr[k + 2 * (z - k)] = a;
-        }
-    } else {
-        int z = i + (j - i - 1) / 2;
-        for (int k = i; k <= j / 2; ++k) {
-            a                        = arr[k];
-            arr[k]                   = arr[k + 2 * (z - k) + 1];
-            arr[k + 2 * (z - k) + 1] = a;
-        }
-    }
-}
-
 void Map::InitializeCities() {
     for (int i = 0; i < this->GetHeight(); ++i) {
         //{GetCities()[i] = {rand()%10, rand()%10};}
@@ -66,10 +47,18 @@ void Map::GenerateStateCandidate(std::vector<int>&) {
     int i = rand() % n;  //генерируем целое случайное число
     int j = rand() % n;  // генерируем целое случайное число
 
+    auto seq_iterator_i = GetSeq().begin();
+    auto seq_iterator_j = GetSeq().begin();
+
+    std::advance(seq_iterator_i, i);
+    std::advance(seq_iterator_j, j);
+
     if (i > j)
-        SwapSubsequence(j, i, GetSeq());  // обращаем подпоследовательность
+        std::reverse(seq_iterator_j,
+                     seq_iterator_i);  // обращаем подпоследовательность
     else
-        SwapSubsequence(i, j, GetSeq());  // обращаем подпоследовательность
+        std::reverse(seq_iterator_i,
+                     seq_iterator_j);  // обращаем подпоследовательность
     // return GetSeq();
 }
 
@@ -107,7 +96,7 @@ std::vector<int> SimulatedAnnealing(Map map, double initialTemperature,
     }
 
     std::random_device rd;
-    std::mt19937 g(rd());
+    std::mt19937       g(rd());
     for (int i = 0; i < n; ++i) {
         // map.GetSeq()[i] = (rand() % 100);
         std::shuffle(map.GetSeq().begin(), map.GetSeq().end(), g);
