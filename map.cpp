@@ -19,6 +19,10 @@ std::vector<int>& Map::GetSeq() {
     return Seq;
 }
 
+void Map::SetSeq(std::vector<int> candidate) {
+    Seq = candidate;
+};
+
 void Map::InitializeCities() {
     for (int i = 0; i < this->GetHeight(); ++i) {
         { GetCities()[i] = {random(0, 100.), random(0, 100.)}; }
@@ -28,7 +32,7 @@ void Map::InitializeCities() {
 double Map::CalculateEnergy(std::vector<int> stateCandidate) {
     int    n = stateCandidate.size();
     double E = 0;
-    for (int i = 1; i < n - 1; i++) {
+    for (int i = 0; i < n - 1; i++) {
         E += sqrt(pow((GetCities()[stateCandidate[i + 1]].first -
                        GetCities()[stateCandidate[i]].first),
                       2) +
@@ -38,10 +42,10 @@ double Map::CalculateEnergy(std::vector<int> stateCandidate) {
     }
 
     E += sqrt(pow((GetCities()[stateCandidate[n - 1]].first -
-                   GetCities()[stateCandidate[n - 2]].first),
+                   GetCities()[stateCandidate[0]].first),
                   2) +
               pow((GetCities()[stateCandidate[n - 1]].second -
-                   GetCities()[stateCandidate[n - 2]].second),
+                   GetCities()[stateCandidate[0]].second),
                   2));
 
     return E;
@@ -51,7 +55,7 @@ void Map::GenerateStateCandidate(std::vector<int>& seq) {
     //    seq - предыдущее состояние (маршрут), из которого мы хотим получить
     //    состояние-кандидат
     int n = seq.size();  // определяем размер последовательности
-    int i = rand() % n;  //генерируем целое случайное число
+    int i = rand() % n;  // генерируем целое случайное число
     int j = rand() % n;  // генерируем целое случайное число
 
     auto seq_iterator_i = seq.begin();
@@ -66,6 +70,8 @@ void Map::GenerateStateCandidate(std::vector<int>& seq) {
     else
         std::reverse(seq_iterator_i,
                      seq_iterator_j);  // обращаем подпоследовательность
+
+    this->SetSeq(seq);
 }
 
 double Map::DecreaseTemperature(double& initialTemperature, int i) {
@@ -75,11 +81,11 @@ double Map::DecreaseTemperature(double& initialTemperature, int i) {
 }
 
 double Map::GetTransitionProbability(double dE, double T) {
-    return exp(-dE / T);
+    return expf(-dE / T);
 }
 
 bool Map::MakeTransit(double probability) {
-    double value = std::rand() % 1;
+    double value = (float)rand() / RAND_MAX;
     if (value <= probability)
         return true;
     else
@@ -94,9 +100,11 @@ std::vector<int> Map::SimulatedAnnealing(Map map, double initialTemperature,
                                          double endTemperature) {
     int n = map.GetHeight();  // получаем размер вектора городов
 
+    std::vector<int> seq(n);
     for (int i = 0; i < n; ++i) {
-        map.GetSeq()[i] = i;
+        seq[i] = i;
     }
+    map.SetSeq(seq);
 
     // задаём начальное состояние, как случайный маршрут
     std::random_device rd;
@@ -105,13 +113,19 @@ std::vector<int> Map::SimulatedAnnealing(Map map, double initialTemperature,
         std::shuffle(map.GetSeq().begin(), map.GetSeq().end(), g);
     }
 
-    double currentEnergy = map.CalculateEnergy(
-        map.GetSeq());  // вычисляем энергию для первого состояния
+    double currentEnergy = map.CalculateEnergy(map.GetSeq());
+    // вычисляем энергию для первого состояния
 
     double T = initialTemperature;
 
     // for (int i = 1; i < 10000; ++i)
-    int i = 0;
+
+    int norm_transit = 0;
+    int prob_transit = 0;
+    int no_transit   = 0;
+
+    int    i = 0;
+    double p = 0.0;
     while (T != endTemperature) {
         map.GenerateStateCandidate(
             map.GetSeq());  // получаем состояние-кандидат
@@ -119,26 +133,37 @@ std::vector<int> Map::SimulatedAnnealing(Map map, double initialTemperature,
         double           candidateEnergy =
             map.CalculateEnergy(stateCandidate);  // вычисляем его энергию
 
-        double p = GetTransitionProbability(candidateEnergy - currentEnergy, T);
         if (candidateEnergy <
             currentEnergy) {  // если кандидат обладает меньшей энергией
             currentEnergy =
                 candidateEnergy;  // то оно становится текущим состоянием
-            map.GetSeq().assign(stateCandidate.begin(), stateCandidate.end());
+            map.SetSeq(stateCandidate);
+            norm_transit++;
         } else {  // иначе, считаем вероятность
+            p = GetTransitionProbability(candidateEnergy - currentEnergy, T);
+
             if (MakeTransit(p)) {  // и смотрим, осуществится ли переход
                 currentEnergy = candidateEnergy;
-                map.GetSeq().assign(stateCandidate.begin(),
-                                    stateCandidate.end());
-            }
+                map.SetSeq(stateCandidate);
+                prob_transit++;
+            } else
+                no_transit++;
         }
 
         i++;
         T = DecreaseTemperature(initialTemperature,
                                 i);  // уменьшаем температуру
-        if (T <= endTemperature)     // условие выхода
-            return map.GetSeq();
+
+        // if (i == 1) {
+        //     std::cout << "E = " << map.CalculateEnergy(map.GetSeq()) << "\n";
+        // }
     }
+
+    // std::cout << "E = " << map.CalculateEnergy(map.GetSeq()) << "\n";
+
+    // std::cout << "norm_transit = " << norm_transit << "\n";
+    // std::cout << "prob_transit = " << prob_transit << "\n";
+    // std::cout << "no_transit = " << no_transit << "\n";
 
     return map.GetSeq();
 }

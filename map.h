@@ -1,5 +1,5 @@
-#include <math.h>
 #include <algorithm>
+#include <cmath>
 #include <ctime>
 #include <fstream>
 #include <iostream>
@@ -19,6 +19,7 @@ public:
 
     std::vector<std::pair<double, double>>& GetCities();
     std::vector<int>&                       GetSeq();
+    void                                    SetSeq(std::vector<int> candidate);
 
     void   InitializeCities();
     double CalculateEnergy(std::vector<int> stateCandidate);
