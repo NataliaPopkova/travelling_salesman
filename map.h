@@ -22,11 +22,11 @@ public:
 
     void   InitializeCities();
     double CalculateEnergy(std::vector<int> stateCandidate);
-    void   GenerateStateCandidate(std::vector<int>&);
+    void   GenerateStateCandidate(std::vector<int>& seq);
 
     static double DecreaseTemperature(double& initialTemperature, int i);
     static double GetTransitionProbability(double dE, double T);
-    static double MakeTransit(double probability);
+    static bool   MakeTransit(double probability);
     static double random(double min, double max);
     static std::vector<int> SimulatedAnnealing(Map    map,
                                                double initialTemperature,

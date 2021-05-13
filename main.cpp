@@ -4,7 +4,9 @@ int main(int argc, char** argv) {
     using namespace tsp;
 
     std::srand(std::time(nullptr));
-    Map map(100);
+
+    int N_cities = 100;
+    Map map(N_cities);
     map.InitializeCities();
 
     std::ofstream file("Cities.txt");
