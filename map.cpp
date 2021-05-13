@@ -1,5 +1,7 @@
 #include "map.h"
 
+namespace tsp {
+
 Map::Map(size_t size)
         : size(size), Cities(size, std::make_pair(0, 0)), Seq(size) {}
 
@@ -62,17 +64,17 @@ void Map::GenerateStateCandidate(std::vector<int>&) {
     // return GetSeq();
 }
 
-double DecreaseTemperature(double initialTemperature, int i) {
+double Map::DecreaseTemperature(double initialTemperature, int i) {
     // initialTemperature - начальная температура
     // i - номер итерации
     return initialTemperature * 0.1 / i;
 }
 
-double GetTransitionProbability(double dE, double T) {
+double Map::GetTransitionProbability(double dE, double T) {
     return exp(-dE / T);
 }
 
-double MakeTransit(double probability) {
+double Map::MakeTransit(double probability) {
     double value = std::rand() % 1;
     if (value <= probability)
         return 1;
@@ -80,12 +82,12 @@ double MakeTransit(double probability) {
         return 0;
 }
 
-double random(double min, double max) {
+double Map::random(double min, double max) {
     return (double)(rand()) / RAND_MAX * (max - min) + min;
 }
 
-std::vector<int> SimulatedAnnealing(Map map, double initialTemperature,
-                                    double endTemperature) {
+std::vector<int> Map::SimulatedAnnealing(Map map, double initialTemperature,
+                                         double endTemperature) {
     int n = map.GetHeight();  // получаем размер вектора городов
                               //    for (int i = 0; i < n; ++i) {
                               //        map.GetSeq()[i] = (rand() % 100);
@@ -136,3 +138,6 @@ std::vector<int> SimulatedAnnealing(Map map, double initialTemperature,
 
     return map.GetSeq();
 }
+
+
+}  // namespace tsp

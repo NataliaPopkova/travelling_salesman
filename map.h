@@ -1,6 +1,3 @@
-#ifndef TSP_H
-#define TSP_H
-
 #include <math.h>
 #include <algorithm>
 #include <ctime>
@@ -10,10 +7,7 @@
 #include <string>
 #include <vector>
 
-double DecreaseTemperature(double initialTemperature, int i);
-double GetTransitionProbability(double dE, double T);
-double MakeTransit(double probability);
-double random(double min, double max);
+namespace tsp {
 
 class Map {
 public:
@@ -29,11 +23,18 @@ public:
     double CalculateEnergy(std::vector<int> stateCandidate);
     void   GenerateStateCandidate(std::vector<int>&);
 
+    static double DecreaseTemperature(double initialTemperature, int i);
+    static double GetTransitionProbability(double dE, double T);
+    static double MakeTransit(double probability);
+    static double random(double min, double max);
+    static std::vector<int> SimulatedAnnealing(Map    map,
+                                               double initialTemperature,
+                                               double endTemperature);
+
 private:
     std::vector<std::pair<double, double>> Cities;
     std::vector<int>                       Seq;
     size_t                                 size;
 };
-std::vector<int> SimulatedAnnealing(Map map, double initialTemperature,
-                                    double endTemperature);
-#endif
+
+}  // namespace tsp

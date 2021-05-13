@@ -1,8 +1,10 @@
 #include "map.h"
 
 int main(int argc, char** argv) {
+    using namespace tsp;
+
     std::srand(std::time(nullptr));
-    Map map(5);
+    Map map(10);
     map.InitializeCities();
 
     std::ofstream file("Cities.txt");
@@ -13,7 +15,7 @@ int main(int argc, char** argv) {
              << std::endl;
     }
 
-    map.GetSeq() = SimulatedAnnealing(map, 10, 0.00001);
+    map.GetSeq() = Map::SimulatedAnnealing(map, 10, 0.00001);
 
     std::ofstream file1("Seq.txt");
     if (!file1.is_open())
@@ -28,6 +30,6 @@ int main(int argc, char** argv) {
     //     std::cout << map.GetSeq()[i] << std::endl;
     // }
 
-    std::cout << "done!";
+    std::cout << "done!\n";
     return 0;
 }
