@@ -4,7 +4,7 @@ int main(int argc, char** argv) {
     using namespace tsp;
 
     std::srand(std::time(nullptr));
-    Map map(10);
+    Map map(100);
     map.InitializeCities();
 
     std::ofstream file("Cities.txt");
@@ -24,11 +24,6 @@ int main(int argc, char** argv) {
         file1 << map.GetSeq()[i] << std::endl;
     }
     file1 << map.GetSeq()[0] << std::endl;
-
-    // for (int i = 0; i < map.GetHeight(); ++i)
-    // {
-    //     std::cout << map.GetSeq()[i] << std::endl;
-    // }
 
     std::cout << "done!\n";
     return 0;

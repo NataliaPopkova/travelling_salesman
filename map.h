@@ -13,6 +13,7 @@ class Map {
 public:
     Map() = default;
     Map(size_t size);
+
     size_t GetWidth() const;  //возвращает количество столбцов
     size_t GetHeight() const;  // возвращает количество строк
 
@@ -23,7 +24,7 @@ public:
     double CalculateEnergy(std::vector<int> stateCandidate);
     void   GenerateStateCandidate(std::vector<int>&);
 
-    static double DecreaseTemperature(double initialTemperature, int i);
+    static double DecreaseTemperature(double& initialTemperature, int i);
     static double GetTransitionProbability(double dE, double T);
     static double MakeTransit(double probability);
     static double random(double min, double max);

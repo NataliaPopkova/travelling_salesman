@@ -30,15 +30,21 @@ double Map::CalculateEnergy(std::vector<int> stateCandidate) {
     int    n = stateCandidate.size();
     double E = 0;
     for (int i = 1; i < n - 1; ++i) {
-        E = E + sqrt((GetCities()[i + 1].first - GetCities()[i].first) *
-                         (GetCities()[i + 1].first - GetCities()[i].first) +
-                     (GetCities()[i + 1].second - GetCities()[i].second) *
-                         (GetCities()[i + 1].second - GetCities()[i].second));
+        E += sqrt(pow((GetCities()[stateCandidate[i + 1]].first -
+                       GetCities()[stateCandidate[i]].first),
+                      2) +
+                  pow((GetCities()[stateCandidate[i + 1]].second -
+                       GetCities()[stateCandidate[i]].second),
+                      2));
     }
-    E = E + sqrt((GetCities()[n - 1].first - GetCities()[n - 2].first) *
-                     (GetCities()[n - 1].first - GetCities()[n - 2].first) +
-                 (GetCities()[n - 1].second - GetCities()[n - 2].second) *
-                     (GetCities()[n - 1].second - GetCities()[n - 2].second));
+
+    E += sqrt(pow((GetCities()[stateCandidate[n - 1]].first -
+                   GetCities()[stateCandidate[n - 2]].first),
+                  2) +
+              pow((GetCities()[stateCandidate[n - 1]].second -
+                   GetCities()[stateCandidate[n - 2]].second),
+                  2));
+
     return E;
 }
 
@@ -64,7 +70,7 @@ void Map::GenerateStateCandidate(std::vector<int>&) {
     // return GetSeq();
 }
 
-double Map::DecreaseTemperature(double initialTemperature, int i) {
+double Map::DecreaseTemperature(double& initialTemperature, int i) {
     // initialTemperature - начальная температура
     // i - номер итерации
     return initialTemperature * 0.1 / i;
@@ -103,14 +109,15 @@ std::vector<int> Map::SimulatedAnnealing(Map map, double initialTemperature,
         // map.GetSeq()[i] = (rand() % 100);
         std::shuffle(map.GetSeq().begin(), map.GetSeq().end(), g);
     }
-    // Функция randperm(n) - генерирует случайную последовательность из целых
-    // чисел от 1 до n
+    // задаём начальное состояние, как случайный маршрут
 
     double currentEnergy = map.CalculateEnergy(
         map.GetSeq());  // вычисляем энергию для первого состояния
     double T = initialTemperature;
 
-    for (int i = 1; i < 10000; ++i) {
+    // for (int i = 1; i < 10000; ++i)
+    int i = 0;
+    while (T != endTemperature) {
         map.GenerateStateCandidate(
             map.GetSeq());  // получаем состояние-кандидат
         std::vector<int> stateCandidate = map.GetSeq();
@@ -134,6 +141,8 @@ std::vector<int> Map::SimulatedAnnealing(Map map, double initialTemperature,
                                 i);  // уменьшаем температуру
         if (T <= endTemperature)     // условие выхода
             return map.GetSeq();
+
+        i++;
     }
 
     return map.GetSeq();
