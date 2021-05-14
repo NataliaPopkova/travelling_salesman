@@ -23,7 +23,7 @@ public:
 
     void   InitializeCities();
     double CalculateEnergy(std::vector<int> stateCandidate);
-    void   GenerateStateCandidate(std::vector<int>& seq);
+    std::vector<int> GenerateStateCandidate(std::vector<int>& candidate);
 
     static double DecreaseTemperature(double& initialTemperature, int i);
     static double GetTransitionProbability(double dE, double T);

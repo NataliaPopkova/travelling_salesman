@@ -51,9 +51,10 @@ double Map::CalculateEnergy(std::vector<int> stateCandidate) {
     return E;
 }
 
-void Map::GenerateStateCandidate(std::vector<int>& seq) {
+std::vector<int> Map::GenerateStateCandidate(std::vector<int>& candidate) {
     //    seq - предыдущее состояние (маршрут), из которого мы хотим получить
     //    состояние-кандидат
+    std::vector<int> seq{candidate};
     int n = seq.size();  // определяем размер последовательности
     int i = rand() % n;  // генерируем целое случайное число
     int j = rand() % n;  // генерируем целое случайное число
@@ -71,7 +72,7 @@ void Map::GenerateStateCandidate(std::vector<int>& seq) {
         std::reverse(seq_iterator_i,
                      seq_iterator_j);  // обращаем подпоследовательность
 
-    this->SetSeq(seq);
+    return seq;
 }
 
 double Map::DecreaseTemperature(double& initialTemperature, int i) {
@@ -127,9 +128,9 @@ std::vector<int> Map::SimulatedAnnealing(Map map, double initialTemperature,
     int    i = 0;
     double p = 0.0;
     while (T != endTemperature) {
-        map.GenerateStateCandidate(
-            map.GetSeq());  // получаем состояние-кандидат
-        std::vector<int> stateCandidate(map.GetSeq());
+          // получаем состояние-кандидат
+        std::vector<int> stateCandidate = map.GenerateStateCandidate(
+            map.GetSeq());
         double           candidateEnergy =
             map.CalculateEnergy(stateCandidate);  // вычисляем его энергию
 
